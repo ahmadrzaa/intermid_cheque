@@ -5,31 +5,33 @@
     <title>Cloud Check Printing – INTERMID</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Your global CSS (nav + hero already there) -->
+    <!-- Your global CSS -->
     <link rel="stylesheet" href="home.css" />
+
+    <!-- Floating tools CSS (your file) -->
+    <link rel="stylesheet" href="floatingtools.css" />
 
     <!-- Font Awesome for footer icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4e2d3; /* same as hero bg */
+      }
+    </style>
   </head>
-<style>
-  html,
-body {
-  margin: 0;
-  padding: 0;
-  /* optional: set the same bg as your hero if you want */
-  background-color: #f4e2d3; /* or whatever your hero bg is */
-}
 
-</style>
   <body>
     <div class="home-root">
       <!-- 🔹 Shared header from header.html -->
       <div include-html="header.html"></div>
 
-      <!-- 🔸 Your HERO / main content (same as before) -->
+      <!-- 🔸 HERO / main content -->
       <main class="home-hero">
         <div class="home-container home-hero-inner">
           <div class="home-copy">
@@ -48,8 +50,8 @@ body {
             <a href="cheque_bbk.html" class="home-cta">Get Started</a>
 
             <p class="home-footnote">
-              Works on Windows, Mac, Android and iOS. Multi-user roles for Admin, Manager and
-              Staff.
+              Works on Windows, Mac, Android and iOS. Multi-user roles for
+              Admin, Manager and Staff.
             </p>
           </div>
 
@@ -67,8 +69,11 @@ body {
       <div include-html="footer.html"></div>
     </div>
 
+    <!-- 🔸 Floating tools snippet (WhatsApp + AI agent) -->
+    <div include-html="floatingtools.html"></div>
+
     <script>
-      // Attach behaviour to footer buttons (A+, A-, contrast, full width)
+      // =============== FOOTER CONTROLS (same as before) ===============
       function initFooterControls() {
         let zoom = 1.0;
         const ZOOM_STEP = 0.1;
@@ -119,7 +124,35 @@ body {
         }
       }
 
-      // Generic include for header.html + footer.html
+      // =============== NEW: FLOATING TOOLS (AI agent open/close) ===============
+      function initFloatingTools() {
+        // Root container inserted from floatingtools.html
+        const root = document.querySelector(".floating-tools-root");
+        if (!root) return;
+
+        const agentBtn = root.querySelector(".floating-btn--agent");
+        const panel = root.querySelector(".agent-panel");
+        const closeBtn = root.querySelector(".agent-close");
+
+        if (!agentBtn || !panel) return;
+
+        // make sure it's hidden initially
+        if (!panel.style.display) {
+          panel.style.display = "none";
+        }
+
+        agentBtn.addEventListener("click", function () {
+          panel.style.display = panel.style.display === "none" ? "flex" : "none";
+        });
+
+        if (closeBtn) {
+          closeBtn.addEventListener("click", function () {
+            panel.style.display = "none";
+          });
+        }
+      }
+
+      // =============== Generic include for header/footer/floating ===============
       function includeHTML(callback) {
         const elements = document.querySelectorAll("[include-html]");
         let remaining = elements.length;
@@ -155,10 +188,11 @@ body {
         });
       }
 
-      // When DOM ready: load header/footer, then wire buttons
+      // When DOM ready: load partials, then init footer + floating tools
       document.addEventListener("DOMContentLoaded", function () {
         includeHTML(function () {
           initFooterControls();
+          initFloatingTools(); // 👈 this makes AI agent icon clickable
         });
       });
     </script>
