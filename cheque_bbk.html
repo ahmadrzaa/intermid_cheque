@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <title>Write Cheque BBK</title>
 
+  <!-- Global home styles (for header + footer) -->
+  <link rel="stylesheet" href="home.css">
+
   <!-- Font + Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -408,6 +411,9 @@
 
 </head>
 <body>
+
+  <!-- shared header -->
+  <div include-html="header.html"></div>
 
 <span class="msg"></span>
 <div class="print_cheque">
@@ -908,5 +914,34 @@ jQuery("#ch_amount,#ch_name,#ch_date,.line_length,.line_length2,\
   }
 });
 </script>
+
+  <!-- shared footer -->
+  <div include-html="footer.html"></div>
+
+<!-- includeHTML loader (same logic as index.html) -->
+<script>
+  function includeHTML() {
+    const elements = document.querySelectorAll('[include-html]');
+    elements.forEach(el => {
+      const file = el.getAttribute('include-html');
+      fetch(file)
+        .then(res => {
+          if (!res.ok) throw new Error("Include failed");
+          return res.text();
+        })
+        .then(html => {
+          el.innerHTML = html;
+        })
+        .catch(() => {
+          el.innerHTML =
+            "<p style='color:red;text-align:center;'>Error loading component: " +
+            file +
+            "</p>";
+        });
+    });
+  }
+  includeHTML();
+</script>
+
 </body>
 </html>

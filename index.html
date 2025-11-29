@@ -4,48 +4,32 @@
     <meta charset="UTF-8" />
     <title>Cloud Check Printing – INTERMID</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Use the same CSS you already have -->
+
+    <!-- Your global CSS (nav + hero already there) -->
     <link rel="stylesheet" href="home.css" />
+
+    <!-- Font Awesome for footer icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
   </head>
-  <style>
-    html,
+<style>
+  html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  background: #000;          /* optional – or leave transparent */
+  /* optional: set the same bg as your hero if you want */
+  background-color: #f4e2d3; /* or whatever your hero bg is */
 }
-  </style>
+
+</style>
   <body>
     <div class="home-root">
-      <!-- ================= NAVBAR ================= -->
-      <header class="home-nav">
-        <div class="home-container home-nav-inner">
-          <!-- Logo -->
-          <a href="home.html" class="home-brand">
-            <img
-              src="img/intermid-01.svg"
-              alt="INTERMID"
-              class="home-brand-logo"
-            />
-          </a>
+      <!-- 🔹 Shared header from header.html -->
+      <div include-html="header.html"></div>
 
-          <!-- Center menu -->
-          <nav class="home-menu">
-            <button type="button" class="home-menu-link">FEATURES</button>
-            <button type="button" class="home-menu-link">APPROVAL FLOW</button>
-            <button type="button" class="home-menu-link">CHECK LAYOUTS</button>
-            <button type="button" class="home-menu-link">PRICING</button>
-          </nav>
-
-          <!-- Right side: LOGIN (you can point to your real login page later) -->
-          <div class="home-nav-right">
-            <a href="login.html" class="home-login-link">LOGIN</a>
-          </div>
-        </div>
-      </header>
-
-      <!-- ================= HERO ================= -->
+      <!-- 🔸 Your HERO / main content (same as before) -->
       <main class="home-hero">
         <div class="home-container home-hero-inner">
           <div class="home-copy">
@@ -61,14 +45,11 @@ body {
               history from any device, using any bank layout or printer.
             </p>
 
-            <!-- Get Started → your cheque page -->
-            <a href="cheque_bbk.html" class="home-cta">
-              Get Started
-            </a>
+            <a href="cheque_bbk.html" class="home-cta">Get Started</a>
 
             <p class="home-footnote">
-              Works on Windows, Mac, Android and iOS. Multi-user roles for
-              Admin, Manager and Staff.
+              Works on Windows, Mac, Android and iOS. Multi-user roles for Admin, Manager and
+              Staff.
             </p>
           </div>
 
@@ -81,6 +62,105 @@ body {
           </div>
         </div>
       </main>
+
+      <!-- 🔻 Shared footer from footer.html -->
+      <div include-html="footer.html"></div>
     </div>
+
+    <script>
+      // Attach behaviour to footer buttons (A+, A-, contrast, full width)
+      function initFooterControls() {
+        let zoom = 1.0;
+        const ZOOM_STEP = 0.1;
+        const MAX_ZOOM = 1.8;
+        const MIN_ZOOM = 0.7;
+
+        function applyZoom() {
+          document.body.style.zoom = zoom;
+        }
+
+        function toggleContrast() {
+          document.body.classList.toggle("high-contrast");
+        }
+
+        function toggleLayout() {
+          document.body.classList.toggle("wide-layout");
+        }
+
+        const btnPlus = document.getElementById("btn-font-plus");
+        const btnMinus = document.getElementById("btn-font-minus");
+        const btnContrast = document.getElementById("btn-contrast");
+        const btnLayout = document.getElementById("btn-layout");
+
+        if (btnPlus) {
+          btnPlus.addEventListener("click", function () {
+            zoom = Math.min(MAX_ZOOM, zoom + ZOOM_STEP);
+            applyZoom();
+          });
+        }
+
+        if (btnMinus) {
+          btnMinus.addEventListener("click", function () {
+            zoom = Math.max(MIN_ZOOM, zoom - ZOOM_STEP);
+            applyZoom();
+          });
+        }
+
+        if (btnContrast) {
+          btnContrast.addEventListener("click", function () {
+            toggleContrast();
+          });
+        }
+
+        if (btnLayout) {
+          btnLayout.addEventListener("click", function () {
+            toggleLayout();
+          });
+        }
+      }
+
+      // Generic include for header.html + footer.html
+      function includeHTML(callback) {
+        const elements = document.querySelectorAll("[include-html]");
+        let remaining = elements.length;
+
+        if (!remaining) {
+          if (typeof callback === "function") callback();
+          return;
+        }
+
+        elements.forEach((el) => {
+          const file = el.getAttribute("include-html");
+          fetch(file)
+            .then((res) => {
+              if (!res.ok) throw new Error("Include failed: " + file);
+              return res.text();
+            })
+            .then((html) => {
+              el.innerHTML = html;
+            })
+            .catch((err) => {
+              el.innerHTML =
+                "<p style='color:red;text-align:center;'>Error loading " +
+                file +
+                "</p>";
+              console.error(err);
+            })
+            .finally(() => {
+              remaining--;
+              if (remaining === 0 && typeof callback === "function") {
+                callback();
+              }
+            });
+        });
+      }
+
+      // When DOM ready: load header/footer, then wire buttons
+      document.addEventListener("DOMContentLoaded", function () {
+        includeHTML(function () {
+          initFooterControls();
+        });
+      });
+    </script>
   </body>
 </html>
